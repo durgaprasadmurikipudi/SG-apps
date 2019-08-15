@@ -1,0 +1,216 @@
+'React' knows all about component and how to make components work together.
+'React-Dom' knows how to take a component and show up it in the DOM.
+
+Create-react-app installs webpack, babel, devserver.
+Babel is used to compile versions of javascript that belongs to ES2015  to ES2019 into ES5 version.
+ES5 is  supported by almost all browsers.
+ES2015 has greater support, but still there are exceptions.
+But from ES2016 till ES2019, there is no support yet.
+Babel spits out ES5version code.
+
+Babel also converts JSX.
+
+JSX is a simple extension to Javascript that looks like a templating language and allows us to define the UI structure
+in the component in familiar HTML syntax.
+
+JSX vs HTML, there are 3 differences that we have to take care while we write JSX.
+Although JSX share many similarities with HTML,
+1. Style is defined as an object rather than as an attribute, ex: <div style={{backgroundColor: 'red';}}/>
+   Also, background-color is how CSS refers it, but in React, how it has changed like backgroundColor, the hyphen is removed and
+   letter after that is capitalized. Now if a css property is there like.. border: 1px solid red; => { border: '1px solid red';}
+   The values ofcourse would be value JS types belonging to number or string, array can also be used, but it will converted into 
+   value equal to its toString representation.
+2. JSX used 'className' instead of class unlike HTML to denote a application of a css class. ex: <div className='cool'/>
+    and htmlFor for 'for' in case of Label tags.
+3. JSX actually can refer variables inside it. Do little bit of Javascript and generate more JSX inside it.
+    like if there is a loop inside a JSX that actually returns JSX, that will evaluated.
+    ex: { <ul>{ items.map(item => <li>item.value</li>) } </ul>}.
+    Here, inside JSX, list of 'li' items will be produced whose ount will ne qual to items.length.
+4. There is very little much of things that JSX can display, a valid JSX will be turned to equivalent HTML and will
+   be displayed, and just a string( Array as toString) or number can also be considered as valid JSX that could be displayed.
+   If you try to print or display object, it will say its not a valid child of React. OR not a valid React Children.
+   Although you can refer any valid JS type.
+
+Components:
+3 Tenets of components:
+Component Nesting: A component can be shown inside of another.
+Component Reusability: We want to make components that can be easily reused through out our application.
+Component Configuration: We should be able to configure a component when it is created.
+
+Miniature Comment app:
+So if we build a comment app that generates comments,
+Its obviously essentail to build the comment component out of the main component that hosts it, so that there is clear logic 
+seperation.
+Now we can host the comment app inside APP - container component. This gives two things,
+component nesting and component reuse.
+We can decalare multiple comment instances inside app component for to all the comments thats we see.
+
+So you declare a comment componet code in separate file, but you need to declare required packages again here.
+Like react etc,
+
+Regrading comment configuration, props comes into picture.
+Props system is what we use to distinguish one componen system from another.
+Becuase obviously every comment has a same structure but different content. Porps system is how we send the component specific data.
+
+Here app component hosts comment-detail component.
+The parent component is responsible for passing props down to child. Effectively controlling the content of each component
+instnace and also so much as to customize the behaviour of each component like behavior of component w.r.t to user interaction etc..
+
+So how do you pass this props ?
+There is no magic, while we declare the component that we want in JSX, we also pass some the data we want as key value pairs 
+inside the component tag. ex:
+<ComponentName key1:"data" key2:{object1.prop1.someData} />
+
+If the component is a functional component, it will recieve a param object conventionally called params,
+which has all this key value pairs as object properties.
+We can then access it inside the component by just referring the name.
+We can pass as props any valid js types including functions.
+
+Not satisfied with the component reuse functionality and componet composition example.
+Lets think of a approval card example.
+An approval card in a typical blog platform for a comment would be like the one where it asks the blog author to approve a comment
+provided by netizens.
+Here approval crad is just a basic ui card, typially we can wrap the comment component in this approval card and ask them to
+approve the componetn and also, we can provide some text i nthe same approval card to confirm some action that they are performing.
+See, we used comment component inside a approval card component, component composition and component resuability.
+Because we use that comment component to display as well as for as approval as well.
+Composing thus provides a way to build component which are sophisticated out of simple components.
+
+Now we have to learn props.children property.
+Here we can pass componet as one of key value paors in props, or we can wrap the component in the opening and closing tags 
+of the parent component.
+like below:
+<Parent><children/></Parent>
+
+Now in the parent component, it is available as props.children, pass whatever in the opening and closing tags of a component, it will 
+be available as props.children!
+
+So there you go a great example for component reuse and component composition.
+
+A component is anything that generates HTML and reacts to user events and accodingly gives response.
+
+So far, we have seen functional components, lets talk about class components.
+A functional component is used to display simple content and a class component is used for anything else.
+
+A class component while allowing you ti give a sense of organized code, it also gives access to state and lifecycle methods
+to control component manoeuver through out its birth till death.
+
+To give an example where class component shines: 
+Imagine where we are locating a clients location by using geolocation api, then based on its result, we want to display its 
+location.
+
+In functional component, JSX is displayed as and when its prepared, how do you display it again after the result from api returns?
+If you delay the return call till location api returns results then user is gonna wait.. right ?
+
+Class component allows you to display some content while our api is fetching the lcoation like a spinner and then re-display the 
+content once api result comes up!
+
+So this done by with the help of state system:
+A state is a traditional JS object taht contains the data relevant to the component instance.
+Updating stae always re renders the component. ( mostly instantly)
+State must always be initialised before usage.
+State must always be updated with setState function.
+
+State lifecycle walk through:
+Now that we have established the basic rules how are we gonna achive the solution to above problem.
+
+We initialise the state in constructor with lat property as null, in constructor.
+And also with the error propety to show the error message if anything goes wrong.
+
+this.state = {lat:null, err: null}.
+
+We make call to geolocationapi in constructor function, we set the lat property in success call back.
+We set the error property incase of an error.
+Now we refer the latitiude in render function via state.
+Initially nothing is displayed, but when the api results are out, if its success, success call back updates the lat property,
+this triggering the re-render and hence lat is displayed.
+else the error property is displayed.
+
+WE can conditionally render either of this depending on the state value.
+This is how we achieve the solution.
+
+Lifecycle methods line by line - by order:
+constructor function is called when the component instance is created.
+render method is called to display JSX.
+componentDidMount is called as soon as the componetn instance is mounted on the DOM.
+
+Whever the state chanegd or props changed..
+render method will be again called.
+componentDidUpdate method will be called right after component is mounted on DOM with updated data.
+
+Once when the time comes when component has to be removed from the DOM, then componentWillUnmount will be called.
+
+Its a react recommendation and a genral ebst practice to put the network calls inside the componentDidUpdate.
+Although there will be 2 renders, react will quickly construct the new DOM in no time!
+
+To provide a default params : syntax would be..
+
+component.defaultProps = {
+    ... all the props p aram defaults.
+}
+
+Mind it...always when event handler is passed to an event in the form, only reference is passed.
+It's basically like the copy of function is being passed and so by default no instance of 'this' will be set.
+
+Also, in controlled componetns, React owns the data rather than DOM.
+Beucase when we display an input field and type some data into it, DOM actually stores teh data.
+In case of a controlled component, React owns it and without ever digging into DOM, it owns the data flow of App.
+
+Basically in the form field when you press enter on any input, it actually submits the form!!!
+remember this, so that yo uwill call event.preventDefault() onSubmit event.
+Also, after on sumbit all input fields get reset, so its important to know this.
+
+Always and always remember when you use value props, always include a handler function for onChange or else you are 
+essentially displaying a read-only field.
+
+The interesting thing about how event handler functions declared in class do not have access to this.state or this.props 
+or for that matter 'this' itself, is it can be fixed by not only making a call to constructor on that event handler 
+or making the event handler an arrow function, but also...
+
+Call the normal event handler function in the contxt of arrow function, yes that fixes it!
+
+like just (event) => call_to_normal_Event_handler_non_arrow_function(event)
+The above expession works and the normal event handler function with this can again have access to this that points to the instance of 
+component.
+
+The props system is not only desinged to configure the child components, but also a way to communicate with parents from the 
+children side. Generally it is done via callbacks being passed down as props to the child components and the child components
+generally call those funcions with the data the child wants to send back to the parent.
+Wheever props changes, componetn will rerender, componentDidUpdate gets triggered for sure.
+
+One interesting and very important thing to remember is that, when we csend a function as props to some other component,
+then it results back with some data by calling that function.
+Here in this function, which we sent as props, if we call this.setState, it would not work!!!, reason, the function was 
+send as a reference rather than any. Hence the function now which is part of props object,
+will have its this property set to the props object and hence no access to this.setState obviously.
+
+So we always bind our event handlers by default in constructor. Now you know the reason.
+Also, if event handler is an arror function or while passing to props if its sent in the context of arrow function call
+this issue would not arise.
+ex: for in context of arrow function: <SearchBar onSubmit={(term) => this.handleSearch(term)} />
+The arrow function wraps the this as parent component instance and so in effect, the handleSearch function effectively 
+was called as method of component instance and hence by default 'this' is automatically set to component instance
+giving access to this.setState and other component instance properties.
+
+React REF's:
+Gives access to a single DOM element.
+We create ref's in the constructor, assign them to instance variables in the constructor,
+ then pass to a particular JSX element as props.
+
+If you assigned a reference to the ref to an image element which has src an online link, 
+then image takes some time to laod isn't it ?
+
+So in componentDidMount, if you logged this.refVariable.current, and you expand the object, you will get all the details,
+but you log them, like the height of it directly like , this.refVariable.current.clientHeight, you will get 0.
+
+Weird isn't it ? This is because when you log the dom object via ref reference, and expand it, chrome at that instance will pull
+out the DOM element and shows its details.
+But when you log out directly the dom element's height it will show as 0, becuase at the time when componentDidMount triggered
+the dom was indeed mounted, but image was still fetchingfrom the link mentioned in its src attribute, hence the 0 value.
+But when you expanded the DOM object, what you get is the instance pulled out at that fresh time after the image has loaded.
+Hence you get the current value.
+
+To work around this and to access height image, you can actually addEventListener 'load' to the DOM element and then you can actually
+access the height in the call back provided to the listener, becuase by the time load has got completed.
+
+

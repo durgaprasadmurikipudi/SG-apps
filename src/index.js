@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './pics-app/Components/App';
+import App from './video-app/Components/App';
 import './index.css';
 
 class Index extends React.Component {
