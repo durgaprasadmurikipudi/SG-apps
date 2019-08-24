@@ -214,3 +214,4 @@ To work around this and to access height image, you can actually addEventListene
 access the height in the call back provided to the listener, becuase by the time load has got completed.
 
 
+
