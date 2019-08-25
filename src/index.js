@@ -1,15 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './video-app/Components/App';
+import App from './blog-app/Components/App';
 import './index.css';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducers from '../src/blog-app/reducers'
 
 class Index extends React.Component {
     
-
     render() {    
         return (
             <div>
-                <App />
+                <Provider store={createStore(reducers)}>
+                    <App />
+                </Provider>
             </div>
         );
     }

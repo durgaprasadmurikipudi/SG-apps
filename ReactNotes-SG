@@ -213,5 +213,32 @@ Hence you get the current value.
 To work around this and to access height image, you can actually addEventListener 'load' to the DOM element and then you can actually
 access the height in the call back provided to the listener, becuase by the time load has got completed.
 
+Fetching data via Redux/ Redux-thunk:
+Components are generally responsible for calling the data they need by calling action creators. Generally they call these
+action creators in componentDidMount.
+Action creators are responsible for making API requests., this is where redux-thunk comes into play. It gets the dat from the server,
+then dispatches the data to the state
+We get fetched data into our application, when redux sees the new state and causes a re-render, mapStateToProps injects the new
+ state again.
+
+Why could not we just use redux, why do we use redux-thunk ?
+Redux is a simple library that recieves calls from dispatch takin in a param a simple object having a property 'type', 
+after which reducers gets run and return new state if the computation results one.
+But if you introduce aysnchronous stuff, there could be failures sometimes when interacting with network and that could result
+in a nasty set of errors and the poor redux doesn't know how to deal with that alien set. It simply doesn't know, hence No.
+
+So what does redux-thunk do ?
+Redux thunk relaxes the rule that return type should be a plain object with a must property 'type'.
+So how does it do it ?
+Redux-thunk just uses a simple cool trick, its algorithm is like this, 
+if the return type of action creator is a function just execute it and optionally return the result, else just return the result 
+of action creator. So what happens if its a function, redux-thunk calls it with a dispatch and getstate params.
+So if we return an async function that makes a network requests and calls the required action at the end, redux-thunk
+calls the function and optionally dispatches an action of plain object with proeprty 'type',
+and also optionally return a result but if return a plain object it will be simply returned to dispatch for processing.
+So whenever anything is dispatched, redux thunk recieves it before dispatch, if its a function, 
+execute it and optionaly return the result. if its plain object then definitely return it as is.
+
+
 
 
