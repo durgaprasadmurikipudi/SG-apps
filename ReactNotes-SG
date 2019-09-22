@@ -239,6 +239,16 @@ and also optionally return a result but if return a plain object it will be simp
 So whenever anything is dispatched, redux thunk recieves it before dispatch, if its a function, 
 execute it and optionaly return the result. if its plain object then definitely return it as is.
 
+You cannot return 'undefined' value from reducer, it can even return null but not 'undefined'.
 
+While returning values from reducer you should not directly mutate inouts. Its opposed to the principle of Pure functions.
+Though reducers recieve global params, it doesn't lose its pure function status. But changing it does!.
 
+You need not worry about numbers or '''strings''', but you have to worry about objects or arrays as they could be mutated!!
+
+Never ever forget to pass a default state value to the reducer while writing it.
+
+The state can be accessed by referring to key which holds the reducer function in combine reducers functions. Whenever an action is 
+dispatched, all the reducer functions present in the combine reducers run and assign their return value in the state object
+with the same key name as they were declared in combine reducers function.
 
