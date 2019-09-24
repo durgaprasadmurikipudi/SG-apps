@@ -252,3 +252,28 @@ The state can be accessed by referring to key which holds the reducer function i
 dispatched, all the reducer functions present in the combine reducers run and assign their return value in the state object
 with the same key name as they were declared in combine reducers function.
 
+Memoization function:
+This function take input a function and memoizes the params with which its being called.
+So once this memoized function is called twice with same arguments, it doesnt do all the computation second time, it just returns 
+the return value which it did when it was invoked the first time.
+
+syntax : cosnt newMemoizedFunc = _.memoize(some function() {});
+Now newMemoizedFunc remembers all the params with which it is being called and only invokes 'some' function when the params are 
+new to it, else it just returns the already computed value which it computed and stored for future reference when it was invoked
+for the first time.
+
+When you use memoize with thunk functions, you need to remember some basic javascript concepts. Thunk function returns a function
+basically. So if you apply memoization on outer function, do you think the computation will not occur again for the same params ?
+Think again, we basically return the function inside, memoization function just returns the computed value with the same param
+or computes if its a new param and returns the computed value again.
+So basicaly no matter what if its same param or new param, it returns that thunk function and redux will compute all that again.
+
+Do you want to memoize the inner returned function? Unfortuantely the returned function is an anonymous function or a general 
+variable of a function without a variable name which gets declared for every function invocation of outer function. Hence memoize
+ gets a new function reference again and again hence computes again every time irrespective of the param.
+
+So what to do ?
+
+Don't declare an anonymous function, declare a function outside of thunk function as a module level variable.
+So it wont be redeclared every time the function invokes.
+

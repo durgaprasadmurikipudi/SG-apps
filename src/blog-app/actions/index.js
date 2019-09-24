@@ -1,4 +1,5 @@
 import JSONAPI from "../API/PlaceHolderJSONAPI";
+import _ from "lodash";
 
 export const fetchPosts = () => {
   console.log("Fetching posts..");
@@ -9,9 +10,11 @@ export const fetchPosts = () => {
   };
 };
 
+const _fetchuser = _.memoize(async (id, dispatch) => {
+  const response = await JSONAPI.get(`users/${id}`);
+  dispatch({ type: "FETCH_USER_BY_ID", payload: response.data });
+});
+
 export const fetchUser = id => {
-  return async dispatch => {
-    const response = await JSONAPI.get(`users/${id}`);
-    dispatch({ type: "FETCH_USER_BY_ID", payload: response.data });
-  };
+  return dispatch => _fetchuser(id, dispatch);
 };
