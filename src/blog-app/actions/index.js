@@ -11,6 +11,7 @@ export const fetchPosts = () => {
 };
 
 const _fetchuser = _.memoize(async (id, dispatch) => {
+  console.log('fectching request for user');
   const response = await JSONAPI.get(`users/${id}`);
   dispatch({ type: "FETCH_USER_BY_ID", payload: response.data });
 });
@@ -18,3 +19,11 @@ const _fetchuser = _.memoize(async (id, dispatch) => {
 export const fetchUser = id => {
   return dispatch => _fetchuser(id, dispatch);
 };
+
+export const fetchPostsAndUsers = () => async (dispatch, getState) => {
+  await dispatch(fetchPosts());
+
+  const userIds = [ ...new Set(getState().posts.map( post => post.userId))];
+  console.log(userIds);
+  userIds.forEach( userId => dispatch(fetchUser(userId))) ;
+}

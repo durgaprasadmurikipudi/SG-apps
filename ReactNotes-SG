@@ -178,7 +178,7 @@ children side. Generally it is done via callbacks being passed down as props to 
 generally call those funcions with the data the child wants to send back to the parent.
 Wheever props changes, componetn will rerender, componentDidUpdate gets triggered for sure.
 
-One interesting and very important thing to remember is that, when we csend a function as props to some other component,
+One interesting and very important thing to remember is that, when we send a function as props to some other component,
 then it results back with some data by calling that function.
 Here in this function, which we sent as props, if we call this.setState, it would not work!!!, reason, the function was 
 send as a reference rather than any. Hence the function now which is part of props object,
@@ -201,7 +201,7 @@ If you assigned a reference to the ref to an image element which has src an onli
 then image takes some time to laod isn't it ?
 
 So in componentDidMount, if you logged this.refVariable.current, and you expand the object, you will get all the details,
-but you log them, like the height of it directly like , this.refVariable.current.clientHeight, you will get 0.
+but you log them, like the height of it directly like, this.refVariable.current.clientHeight, you will get 0.
 
 Weird isn't it ? This is because when you log the dom object via ref reference, and expand it, chrome at that instance will pull
 out the DOM element and shows its details.
@@ -262,11 +262,11 @@ Now newMemoizedFunc remembers all the params with which it is being called and o
 new to it, else it just returns the already computed value which it computed and stored for future reference when it was invoked
 for the first time.
 
-When you use memoize with thunk functions, you need to remember some basic javascript concepts. Thunk function returns a function
+When you use memoize thunk functions, you need to remember some basic javascript concepts. Thunk function returns a function
 basically. So if you apply memoization on outer function, do you think the computation will not occur again for the same params ?
 Think again, we basically return the function inside, memoization function just returns the computed value with the same param
 or computes if its a new param and returns the computed value again.
-So basicaly no matter what if its same param or new param, it returns that thunk function and redux will compute all that again.
+So basicaly no matter what if its same param or new param, it returns the new thunk function and redux will compute all that again.
 
 Do you want to memoize the inner returned function? Unfortuantely the returned function is an anonymous function or a general 
 variable of a function without a variable name which gets declared for every function invocation of outer function. Hence memoize
@@ -276,4 +276,84 @@ So what to do ?
 
 Don't declare an anonymous function, declare a function outside of thunk function as a module level variable.
 So it wont be redeclared every time the function invokes.
+
+There was a problem where in componentDidMount, repeatedly the calls were made to same data, one way was to memoize the functions.
+Other way, well first the problem definition,
+Get all blog posts, iterate all the posts and filter out unique users, then fetch each post.
+This was the problem statement,
+One way was to memoize the fetch user so that when a request was made to the same user, memoize just used to return the 
+previously fetch value. 
+But there is one little problem, memoize only memoizes previous input value.. so it would work, if authors came like 
+1,1,1,2,2,2 and so on it would work.
+But if they came like 1,2,1,1,2,1, then a request will be made again for user 1 immediately after request is made for 2
+even after 1 has been fetched.
+To circumvent this problem, one thing would be to fetch all posts and then get all the unique users and fetch each user individually.
+
+Here comes the beautiful usage of async and await.. 
+Since you have two seperate action creators for fetchUSers and fetchPosts, and if you write a super functon, which 
+fetches posts and then after users, you have to wait for fetchPosts action creator to be completed.
+
+Now since fetchPosts is an async function, we can put await keyword before that and wait till posts are fetched before moving 
+onto fetching users.
+
+Now you fetch the users by liquidating getState, and iterate over each userid, bring out the unique collection, and fetch each 
+userId.
+
+Now, lets take a look at the code, there are some brilliant things to notice.
+
+// Action creator for fetchPosts, its a thunk actually.
+export const fetchPosts = () => {
+  console.log("Fetching posts..");
+  return async dispatch => {
+    const response = await JSONAPI.get("/posts");
+    console.log("Response:", response);
+    dispatch({ type: "FETCH_POSTS", payload: response.data });
+  };
+};
+
+// A private fetchUser function, actually it was declared seperately so that to pass to memoized function.
+const _fetchuser = _.memoize(async (id, dispatch) => {
+  const response = await JSONAPI.get(`users/${id}`);
+  dispatch({ type: "FETCH_USER_BY_ID", payload: response.data });
+});
+
+// Action creator for fetchUsers.
+export const fetchUser = id => {
+  return dispatch => _fetchuser(id, dispatch);
+};
+
+// The super function, where we want to get posts an asynchronous action and then once it is completed, we would like
+// to fetch users.
+
+// Notice the signature, we are using overloaded function that includes getState.
+export const fetchPostsAndUsers = () => async (dispatch, getState) => {
+  // Now this is the cool thing, we want to call the action creator, it's a 2 layer function and in
+  // second layer, it needs to passed dispatch method. So how are we gonna call that in this action creator ?
+  // It's much more easy than we think, just call it the way how you call a regular action creator..
+  // Generally we call an action creator in a component, passed on by mapDispatchToProps. Here what
+  // mapDispatchToProps does is it passes the invoked value of that action creator 
+  // as a param to to dispatch call. 
+  // mapDispatchToProps(disaptch) { return { actionCreator1: dispatch(actionCreator1())}}
+  // Just like below.
+
+  await dispatch(fetchPosts());
+
+  // Now in redux, where redux-thunk middleware is present, whenever a function is received by dispatch call, rather than a plain
+  // action object, it invokes it with dispatch param. So action creator fetchPosts invocation returns a function, 
+  // so dispatch call on it, gets it invoked with 'dispatch' function as param. And the thunk code for fetching posts runs. 
+  // That's a clever technique, if you ask me.
+  // The await in before it ensuresd that async function - fetchPosts is complete.
+  
+  // Here, in the below line, we are calling getState and getting access to posts. Since in the above call, dispatch of
+  // returned posts from the server is pushed into redux state( actually this line in fetchPosts:
+  // dispatch({ type: "FETCH_USER_BY_ID", payload: response.data }); ), and only then await lets you in on the next statement,
+  // the below getState, actually has access to latest state of posts and hence the below line works as expected.
+  const userIds = [ ...new Set(getState().posts.map( post => post.userId))];
+  console.log(userIds);
+
+  // again the intelligent use of and the basic way on how to call a thunk is employed here, calling another action creator in
+  // dispatch call to make it run.
+  userIds.forEach( userId => dispatch(fetchUser(userId))) ;
+}
+
 
