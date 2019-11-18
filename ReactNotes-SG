@@ -356,4 +356,87 @@ export const fetchPostsAndUsers = () => async (dispatch, getState) => {
   userIds.forEach( userId => dispatch(fetchUser(userId))) ;
 }
 
+Routing in React:
+We install React-router-dom package.
+
+Usage:
+
+import { BrowserRouter, Route } from 'react-router-dom';
+
+<BrowserRouter>
+  <div>
+    <Route path="/home" component={Home} />
+    <Route path="/about" component={About} />
+  </div>
+</BrowserRouter>
+
+That route gets activated, whose path matches with address in broswer navigation bar.
+Rest all components just hide themselves.
+
+Use it like below:
+
+<BrowserRouter>
+  <div>
+    <Route path="/home" component={Home} />
+    <Route path="/home" component={Home} />
+    <Route path="/about" component={About} />
+  </div>
+</BrowserRouter>
+
+Home component gets displayed twice. Becuase thats the way react router works.
+
+Weirdly enough there is one more gotcha..
+
+<BrowserRouter>
+  <div>
+    <Route path="/" component={login} />
+    <Route path="/home" component={Home} />
+    <Route path="/about" component={About} />
+  </div>
+</BrowserRouter>
+
+Now here, both the dashboard and login component gets displayed.?
+Why you ask, thats becuase every route gets activated with the below logic,
+if browser_navigation_address_bar.path.contains(route_path) display_concerned_component.
+So, if browser path is "/home", then "/home".contains(), matches both strings "/", "/home".
+
+If you want to do a strict equality check, pass in 'exact' prop to each route component.
+
+Now to navigate, general idea is to use anchor links, but in react, its a very bad idea.
+What happens when we click an anchor tag ?
+Our browser makes a request for locahost:3000/that_spcific_link
+Development server responds with index.html file,
+Browser recievesd index.html file, dumps old html file it was showing and along with that all of ypu react/redux data!.
+Now broswer downloads the scripts listed in our index.html and our app starts afresh!
+
+To avoid that we can Link component provided by react-router-dom.
+Although this displays the plain anchor tag in the final html, the usage of link component wires the anchor tag such that
+React router prevents browser making a separate request. URL still changes and the history gets updated. The same index.html
+file is used. This is where SPA term comes up!
+As a result, BrowserRouter gets updated and communicates the new url to all Route  child components.
+
+So there are also other types of routers like HashRouter and MemoryRouter from react-router-dom package.
+HashRouter basically inserts a # sign after TLD, Top Level Domain.
+In localhost:3000/page_one, localhost:3000 is TLD.
+In BrowserRouter, If we request for page_two, url gets changed from locahost:3000 to localhost:3000/page_two.
+In HashRouter, it will be like localhost:3000/#/page_two. 
+
+So why two routers?
+Traditional HTML servers, respond with a 404 error, when there is  no resource found under that specific path, so if we are
+using tradition html server to serve react-app, we can configure route path in server that it should not look any path
+specifics after # sign and that way, HashRouter helps in easy deployment and configuration in Tradtional Server.
+
+There is another router, MemoryRouter for which path never changes.
+
+
+############################ Review the routing course again please.
+
+
+
+
+
+
+
+
+
 
