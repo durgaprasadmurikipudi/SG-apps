@@ -1,20 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './blog-app/Components/App';
+import App from './twitch/Components/App';
 import './index.css';
-import { Provider } from 'react-redux';
+/* import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk'
-import reducers from '../src/blog-app/reducers'
+import thunk from 'redux-thunk' */
 
-class Index extends React.Component {
+
+export default class Index extends React.Component {
     
     render() {    
         return (
             <div>
-                <Provider store={createStore(reducers, applyMiddleware(thunk))}>
+                
                     <App />
-                </Provider>
+                
             </div>
         );
     }

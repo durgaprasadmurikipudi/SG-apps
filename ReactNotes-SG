@@ -429,7 +429,8 @@ specifics after # sign and that way, HashRouter helps in easy deployment and con
 There is another router, MemoryRouter for which path never changes.
 
 
-############################ Review the routing course again please.
+############################ Review the routing course again please. Also review the twitch app example carefully, once we
+click the anchor link and then, Link component doesn't work properly.
 
 
 
