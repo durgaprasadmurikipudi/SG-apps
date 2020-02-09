@@ -433,6 +433,15 @@ There is another router, MemoryRouter for which path never changes.
 ############################ Review the routing course again please. Also review the twitch app example carefully, once we
 click the anchor link and then, Link component doesn't work properly.
 
+Not only that redux devtool makes you jump to a state, it also changes the app state to that phase.
+One more thing, if you dont hook up window__devtool object in compose enhancers, then it cannot be seen,
+also if you keep it like that, then in prod also, it will be visisble, so be aware.
+
+You can persist the debug session, by putting at the end of the url ?debug_session='some_String_'
+
+Then it if you use that url, again without closing the browser, the same state will be visisble again, even after multiple
+refreshes and also more over you can you can actually jump back and forth and see what went wrong!!
+
 
 
 

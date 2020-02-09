@@ -2,20 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './twitch/Components/App';
 import './index.css';
-/* import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk' */
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+
+import reducers from './twitch/reducers';
+
+/* import thunk from 'redux-thunk' */
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducers, composeEnhancers(applyMiddleware()));
 
 
 export default class Index extends React.Component {
     
     render() {    
         return (
-            <div>
-                
-                    <App />
-                
-            </div>
+            <Provider store={store}>                
+                    <App />                
+            </Provider>
         );
     }
 }
