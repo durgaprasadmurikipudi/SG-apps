@@ -7,10 +7,10 @@ import { createStore, applyMiddleware, compose } from 'redux';
 
 import reducers from './twitch/reducers';
 
-/* import thunk from 'redux-thunk' */
+import thunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(reducers, composeEnhancers(applyMiddleware()));
+const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
 
 
 export default class Index extends React.Component {
