@@ -442,6 +442,16 @@ You can persist the debug session, by putting at the end of the url ?debug_sessi
 Then it if you use that url, again without closing the browser, the same state will be visisble again, even after multiple
 refreshes and also more over you can you can actually jump back and forth and see what went wrong!!
 
+Also, if you have to maintain a group of objects in array, and each object has a unique id that uniquely distinguishes them,
+then we can actually do an object based reducer.
+we first createa a new state by new state = { ...state};
+then newState[id] = action's new object.
+or in single line return { ...newState, [id]: action.payload};
+
+also,await on an promise expression returns result.
+For example , promise.then( data => data.json()), can be written as (await promise).json();
+
+
 
 
 
