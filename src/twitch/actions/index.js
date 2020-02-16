@@ -1,4 +1,5 @@
 import streams from "../apis/streams";
+import history from '../history';
 
 export const SIGN_IN = "SIGN_IN";
 export const SIGN_OUT = "SIGN_OUT";
@@ -20,6 +21,7 @@ export const createStream = formValues => async (dispatch, getState) => {
     type: CREATE_STREAM,
     payload: createdStream.data
   });
+  history.push('/');
 };
 
 export const fetchStreams = () => async dispatch => {
@@ -29,9 +31,10 @@ export const fetchStreams = () => async dispatch => {
 };
 
 export const fetchStream = id => async dispatch => {
-  const response = await streams.get("/stream/" + id);
-
-  dispatch({ tpype: FETCH_STREAM, payload: response.data });
+  console.log('id recieved:', id)
+  const response = await streams.get("/streams/" + id);
+  console.log('response recieved:', response)
+  dispatch({ type: FETCH_STREAM, payload: response.data });
 };
 
 export const updateStream = (id, formValues) => async dispatch => {

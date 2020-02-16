@@ -452,6 +452,21 @@ also,await on an promise expression returns result.
 For example , promise.then( data => data.json()), can be written as (await promise).json();
 
 
+We all know how to make a url dynamic.
+We introduce a wildcard or as we programmers love to call it a variable in url and any value that is there will be dynamically
+stored under that variable name.
+
+For ex: we declare a route <Route to="streams/edit/:id" ....
+Here id is the wildcard/dynamic variable introduced into that route, so when we visit or make a link,
+streams/edit/3, we will go to the component designated by that route and we can access that value of the variable from the props
+of that component under the path 'match.params.<wildcard/variable_name>
+so if variable name is id, then we will get the value in match.params.id
+We are not limited to one wildcard, we can introduce as many as we want to.
+
+For example, we have route like this <Route to="streams/edit/:id/:preference" component={EditComponent} />
+Then we go to the url streams/edit/3/spicy , then the component EditComponent gets displayed and we get this object in
+match.param -> { id: '3', preference: 'spicy'}
+
 
 
 
