@@ -26,24 +26,22 @@ export const createStream = formValues => async (dispatch, getState) => {
 
 export const fetchStreams = () => async dispatch => {
   const response = await streams.get("/streams");
-  console.log('response after caling', response);
   dispatch({ type: FETCH_STREAMS, payload: response.data });
 };
 
 export const fetchStream = id => async dispatch => {
-  console.log('id recieved:', id)
   const response = await streams.get("/streams/" + id);
-  console.log('response recieved:', response)
   dispatch({ type: FETCH_STREAM, payload: response.data });
 };
 
 export const updateStream = (id, formValues) => async dispatch => {
-  const response = await streams.put("/streams/" + id, formValues);
+  const response = await streams.patch("/streams/" + id, formValues);
 
   dispatch({
     type: UPDATE_STREAM,
     payload: response.data
   });
+  history.push('/');
 };
 
 export const deleteStream = id => async dispatch => {

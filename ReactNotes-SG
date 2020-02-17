@@ -467,6 +467,19 @@ For example, we have route like this <Route to="streams/edit/:id/:preference" co
 Then we go to the url streams/edit/3/spicy , then the component EditComponent gets displayed and we get this object in
 match.param -> { id: '3', preference: 'spicy'}
 
+Difference between a patch and put request is very important according to rest conventions.
+A patch request is meant to update some proeprties. It is essentially merged with the existing object.
+A put request simply replaces the existing object with the incoming object coming from the put request.
+
+Why we use react portals, generally we know that our components some times gets deeply nested.
+If you remember the stacking context, a z-index of a child element will never surpass the z-index of the parent.
+So if the z-index of the parent is much lesser than the z-index of modal, the modal gets that value of its parent element.
+In the same case if we try to chaneg the z-index of the parent to achieve the modal functionality in a deeply nested
+component, we might be taking a risk where we are breaking the layout of whole app or atleast the dynamics between parent 
+element and its direct siblings.
+
+This is where react portals come handy.
+
 
 
 
