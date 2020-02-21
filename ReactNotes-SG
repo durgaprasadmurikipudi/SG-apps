@@ -480,6 +480,18 @@ element and its direct siblings.
 
 This is where react portals come handy.
 
+The cool thing about arrow funcions is that they can refer to the this of of whatever parent lexical context they are in,
+even when nested deep inside of some functions.
+
+When to use history.push('some_path') and <Link to='some_path' .../>
+When you want to route on click of something use Link, else if you want to programatically route on some other programmatic 
+event other than click, or in response to some calculation or for whatever reason, use history.push
+
+Onething that can catch you off gaurd is using routes without switch, 
+so when you do not use switch, you will see that streams/new and streams/:id match and both will be displayed.
+Streange right, that is because :id matches everything, even some string like 'new'.
+Because it is a placeholder for some value and there are no restrictions on what type of value that it is reserving its place for.
+
 
 
 

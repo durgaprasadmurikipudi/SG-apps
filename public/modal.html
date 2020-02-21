@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Popup</title>
+  <style>
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 300px;
+      background-color: aqua;
+    }
+
+    .content{
+      margin-left: 300px;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: gray;
+      z-index: 10;
+    }
+
+    .modal-body {
+      background-color: white;
+      height: 30%;
+      width: 30%;
+      margin: auto ;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal">
+    <div class="modal-body">
+      <h1>I'm a modal</h1>
+    </div>
+  </div>
+  <div class="sidebar">I'am a sidebar</div>
+  <div class="content">I'm some content</div>
+</body>
+</html>
