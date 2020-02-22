@@ -474,7 +474,7 @@ A put request simply replaces the existing object with the incoming object comin
 Why we use react portals, generally we know that our components some times gets deeply nested.
 If you remember the stacking context, a z-index of a child element will never surpass the z-index of the parent.
 So if the z-index of the parent is much lesser than the z-index of modal, the modal gets that value of its parent element.
-In the same case if we try to chaneg the z-index of the parent to achieve the modal functionality in a deeply nested
+In the same case if we try to change the z-index of the parent to achieve the modal functionality in a deeply nested
 component, we might be taking a risk where we are breaking the layout of whole app or atleast the dynamics between parent 
 element and its direct siblings.
 
@@ -491,6 +491,58 @@ Onething that can catch you off gaurd is using routes without switch,
 so when you do not use switch, you will see that streams/new and streams/:id match and both will be displayed.
 Streange right, that is because :id matches everything, even some string like 'new'.
 Because it is a placeholder for some value and there are no restrictions on what type of value that it is reserving its place for.
+
+Context is passing props to deeply nested component from parent component without explictly passing that to all the 
+components present between child and parent.
+
+Context object is like an invisible pipe that runs among all branches of nested components under the parent component.
+You either create a default valued - context object or a provider object of context, to get data flowing into this context pipeline.
+
+You can basically access the data present in this context pipeline in any nested component, by referring to this.context
+or creating a consumer component.
+
+The exact syntax is as follows:
+create a separate file for a specific context.
+
+import React from 'react';
+
+now create context and return it with a default value.
+export default React.createContext('cool');
+
+Now if you want access that value, go to any component and if its a classic component,
+then do the below.
+
+import LanguageContext from '../contexts/LanguageContext';
+
+class Some extends React.Component {
+  static contextType = LanguageContext;
+
+  Now you can access the value by refering to context property of this class instance.
+
+  like in any of this class method you can refer to this.context and you will get 'cool' value.
+
+
+Now if you want this value to be changing rather than a fixed value,
+you can actually wrap the parent component in provider of that context and passing the value to 'value' prop, so 
+whenever the value prop changes in there, it gets reflected in the child component wherever it is accessing.
+
+ex:
+<LanguageContext.Provider value={this.state.language}>
+  <UserCreate />
+</LanguageContext.Provider>
+
+Now if you repeated the code above twice, the user create in each wrapping will have a total independent piepline from the
+provider. That is whenever a new instance is created a total independent pipeline is created.
+
+Also, whenever the value is changed the exxisting functions or componetn are called with new props, essentially forcing them to 
+re-render to reflect the changed context.
+
+There is also another way of accessing the context by LanguageContext.Consumer, by render props pattern.
+The first argument is called with value as expected in that renderprops pattern.
+
+Why do you want this? this is needed if there are multiple contexts and you want to use both the context values in the same 
+component. This consumer component syntax, lets you refer the context name that you want to use by its name against the
+generic name this.context that can only refer to a single context at any time.
 
 
 
