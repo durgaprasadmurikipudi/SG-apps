@@ -544,6 +544,8 @@ Why do you want this? this is needed if there are multiple contexts and you want
 component. This consumer component syntax, lets you refer the context name that you want to use by its name against the
 generic name this.context that can only refer to a single context at any time.
 
+Hooks are designed to share logic better across the component.
+
 
 
 
