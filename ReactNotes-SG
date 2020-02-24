@@ -546,6 +546,19 @@ generic name this.context that can only refer to a single context at any time.
 
 Hooks are designed to share logic better across the component.
 
+Testing:
+
+This is under command environment:
+react-scripts test --env=jsDOM 
+
+When you do a ReactDOM.render on a div, it will actually insert the full HTML derived from that component.
+This can be used to test the html output of the react specifically.
+
+Whenever there is setupTests.js file under the src directory, Jest runs that file before anytime when it tries to execute test files.
+
+
+
+
 
 
 
