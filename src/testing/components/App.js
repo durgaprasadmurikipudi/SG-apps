@@ -1,6 +1,6 @@
 import React from 'react';
-import CommentBox from './CommentBox';
-import CommentList from './CommentList';
+import CommentBox from 'testing/components/CommentBox';
+import CommentList from 'testing/components/CommentList';
 
 class App extends React.Component {
 
