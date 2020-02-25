@@ -556,6 +556,11 @@ This can be used to test the html output of the react specifically.
 
 Whenever there is setupTests.js file under the src directory, Jest runs that file before anytime when it tries to execute test files.
 
+Enzyme provides 3 options to test React, 
+Static - Render the given component and return plain HTML
+Shallow - Render just the given component in HTML and none of its children
+Full DOM - Render the given component and all of tis children and + let us modify the HTML afterwards.
+
 
 
 
