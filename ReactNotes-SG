@@ -559,7 +559,157 @@ Whenever there is setupTests.js file under the src directory, Jest runs that fil
 Enzyme provides 3 options to test React, 
 Static - Render the given component and return plain HTML
 Shallow - Render just the given component in HTML and none of its children
-Full DOM - Render the given component and all of tis children and + let us modify the HTML afterwards.
+Full DOM - Render the given component and all of its children and let us modify the HTML afterwards.
+
+Do you know that form gets submitted when you click on form's submit button, beware of that in react and see that you call
+event.preventDefault() in the handler function of that button.
+No matter what if there is a button in form, and you click it, it gets submitted automatically.
+Beucase button default type is 'submit', to stop this default action, you can also do type='button', but
+it doesnot autimatically submit the form ofcourse. there is also one mroe type to button, 'reset'.
+
+Unlike static or shallow redndering, full rendering actually mounts the component in the DOM, which measn taht test can effect 
+each other if they are all using the same DOM. So do a unmount call as a cleanup.
+
+Ever wondered how you gonna check the text box value after a re render or any of the input element after a render of for 
+that matter during inital render even, in context of react testing.
+
+wrapper.find('textarea').simulate('change', { event: { target: 'cool'}});
+wrapper.update();
+
+expect(wrapper.find('textarea').prop('value')).toEqual('new comment');
+
+As we see the value prop is passed to text area, we inspect that prop value and voila we are done testing!
+MAke sure you also call wrapper.update(), when your tests tocuh the code path, setState call atleast once.
+This way you can be assured that asynchronous call of setState was acted upon.
+
+Syncs the enzyme component tree snapshot with the react component tree. Useful to run before checking the render output 
+if something external may be updating the state of the component somewhere.
+
+NOTE: can only be called on a wrapper instance that is also the root instance.
+
+NOTE: this does not force a re-render. Use wrapper.setProps({}) to force a re-render.
+
+Generally we can actually use describe in testing to limit the scope of before each and after each as well.
+So if you have 3 tests which require some common functionality you can group them in a describe and write a beforeEach for them.
+
+The connect function generally requires that it is called under hierarchy of provider component.
+
+IF you want to test the html of a componenet, you can do by enzyme by calling the render method of that component, 
+it returns a cheerio wrapper of it. Cheerio wrapper is a light weight implementation of jquery syle object.
+You can query the hmtl, just the way you do with actual jquery.
+That way you can add class remove class, add text, remove text and all etc..
+
+Why does axios request fail in testing environment, the answer is simple, all our components in test suite are mounted on 
+JS Dom -- fake browser environment rather than real dom of browser, which can assit in making network requests.
+But the JS Dom can do no such help, hence the axios fails in test suite.
+
+We can actually install moxios, tha helps axios get response without actually making a network call.
+Why do we test a 3rd party library first of all, during integration testing ofcourse, we wish to return the mocked results
+instead of original results to test out different scenarios and also round trip of original network requests also delay tests.
+
+in beforeEach() of our request, we actually, call moxios.install();
+then d o a intercept of network request axios is trying to make and return it with the dat we wish to return.
+
+beforeEach(() => {
+  moxios.install();
+  moxios.stubRequest('url_you_want_to_intercept', {
+    status: 200,
+    response: <the_response_you_want_to_return>
+  })
+});
+
+and in afterEach() you do a moxios.uninstall so that it will not interfere with the other axios request the application or another
+test suite is attempting to make.
+
+sometime moxios can take time to respond, so if you are actually testing any logic, that has to happen after request gets 
+completed, the testing might fail as they are immediately tested without any wait happening.
+We can include all that logic of testing in moxios.wait( () => {}); and it will be executed immediately after all pending requests
+ae completed from teh moxios side.
+
+Also, since this is an asynchronous request, we have another problem, whenever tehre is an asynchronous logic, jest doest wait for that
+statement to get completed, hence it will give us a param, done  and till ti is called, jest doesnt mark the test as completed
+and patiently listens for any errors that might happen.
+Call teh done function after syour async request is complete or after all the async testing logic is complete, jest will 
+continue ending the test.
+
+Cookies vs tokens:
+Cookie: 
+Automatically gets included on all requests.
+Unique to each domain.
+Cannot be sent to different domains.
+
+Since HTTP protocol is stateless, to provide context for each request cookies are used. They manifest themselves in the header.
+It contains information such as User ID, that server can uniquely recognize and authenticate and authorize him.
+
+Token:
+Have to manually wire up.
+Can be sent to any domain.
+
+So if cookies somehow fill the purpose, why we are actually going to the tokens, now a days websites are being hosted on content
+server, which just serve index.html and bundle.js.
+So content servers are cheap, leight weight can spit that index.html + bundle.js to any different location in the world easily,
+and can handle any nmber of requests. But API server nned not be in the same server or domain. See Web server and native app
+can make api calls to the same server and it can very well be in different domain. Makin API server as a discrete, independent
+entity has its own advantages. So tokens now help you in making requests to different domains securely.
+
+More over, mobile trafiic may be more than web traffic, and now the api server may be sitting behind the load balancers to 
+balance out the traffic, and we also do not want to have a down time for server, when we are pushing updates to the website.
+So to have a much granular control, they may very well be in different domains and tokens are an easy way to authenticate
+the users in that case.
+
+As part of authentication we are also gonna discuss some setup from server side, so you are gonna see some node discussion
+as part of that as well and hence despite its not react, this is also being discussed.
+
+// Main starting up point of the application
+
+// if you want to import like this in node js, you got to add this line in package.json
+// "type": "module"
+
+import express from 'express';
+import http from 'http';
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
+
+// unlike as you'd do in react, you got to mention the file name when you import any non module in node.js
+import router from './route.js';
+
+const app = express();
+
+// APP setup
+// morgan is a logging library
+
+app.use(morgan('combined'));
+
+// so far we misudnerstood the word parse, according to dictionary parse means
+// resolve (a sentence) into its component parts and describe their syntactic roles.
+// so when we say bodyparser.json, its not that it will parse json, but whatever that is parsed will be made json and 
+// described such, in short, it will be made into json!
+
+app.use(bodyParser.json());
+
+// Here in this file, we will use app.get and app.post, etc. and define all kind of possible comminications to handle and the 
+// reponses to be sent.
+
+router(app);
+
+// Server setup
+const port = process.env.PORT || 3090;
+const server = http.createServer(app);
+server.listen(port);
+console.log('Server listening on:', port);
+
+// Route.js
+
+const route = app => {
+  app.get('/', function (req, res, next) {
+    res.send(['cool', 'have', 'fun!']); // you can send json as well, it will be printed as string on browser side.
+  });
+};
+
+export default route;
+
+
+
 
 
 
