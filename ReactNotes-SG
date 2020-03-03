@@ -706,10 +706,41 @@ const route = app => {
   });
 };
 
-export default route;
+In usermodel,
+// On save hook, encrypt password.
+UserSchema.pre('save', function(next) {
+  // The function is run in the context of correct object that is getting saved.
+  const user = this;
+
+  // generate a salt, make 10 iterations to produce.
+  bcrypt.genSalt(10, function(err, salt ){
+    if(err) next(err);
+    // Once salt is produced generate a hash combining plain text and salt .
+    bcrypt.hash(user.password, salt, function(err, hashedResult) {
+      if(err) next(err);
+
+      // since we are running in the context of about to be saved object, we can retrieve it and modify it,
+      // so we assign the hash to it instead of password.
+      user.password = hash;
+      // call the next middleware/ whatever function to continue on the next process
+      next();
+    });
+  });
+});
 
 
+When the user submits a password next time when logging in, salt is again produced, hash is generated with this submitted
+password, and compared to the stored hash. if both hashes match, we send them the JWT, JSON Web Token.
 
+When signing up or signing in, give a token in exchange for an id.
+userId + our secret string  = JWT.
+
+When the user makes an authenticated request, they should include their JWT.
+JWT + our secret string = userId.
+
+Read abot JWT
+also, disucss about jwt code generation from server side.
+*********************************************************
 
 
 
