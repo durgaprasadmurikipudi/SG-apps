@@ -824,6 +824,34 @@ Second would be the data object. You should always define your callbacks in the 
 
 And also remember that the object that we expose via import is same across everywhere. It's the same copy all across the application.
 
+Now that passport authenticated, how do we pass that user information to next middleware?
+Luckily and gracefully, passport.authenticate via local middleware, when everything is successful,
+we call tis done method by 
+
+res.send({ token: tokenForUser(req.user)});
+
+strange how import modules work in nodejs, either cjs or import syntax.
+
+passport once we set stratgey will work either in two ways:
+
+import passport from 'passport';
+import passportService from './services/passport.js';
+
+const requireAuth = passport.authenticate('jwt', { session: false });
+const requireSignIn = passport.authenticate('local', { session: false});
+
+we don't use any passportService module declared above in the file, but that some how makes passport.authenticate
+knwo the strategies set in services/passport.js file.
+
+It will also work if you declare like this:
+import passport from './services/passport.js'.
+
+So what is this thing.. although same passport object is exported in both the files ?
+It is becuase if services file is never imported, it will never be called or executed and never setting the strategies required by
+passport. So if it was never set, passport object imported will have no strategies set.
+But if it was called, all the required strategies are set and by the time you load the module passport here
+all the stratgies are already present in that passport object. So the imports placement is crucial, see that all the required 
+modules are loaded before you execute your app.
 
 
 
