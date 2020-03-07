@@ -738,9 +738,98 @@ userId + our secret string  = JWT.
 When the user makes an authenticated request, they should include their JWT.
 JWT + our secret string = userId.
 
-Read abot JWT
-also, disucss about jwt code generation from server side.
-*********************************************************
+We generate JWT by like this:
+
+import jwt from 'jwt-simple';
+import SECRET_KEY from '../config.js'; // a smaple random string, but should never be revealed
+
+function tokenForUser(user) {
+  const timestamp = new Date().getTime();
+  // A jwt is formed from jwt.encode, it will be given 2 params: one object and other SECRET_KEY
+  // What object contains is sub(short for subject) which will subject to process of generating 
+  // JWT token. You can attach many properties to this object, one such is iat(short for issued at timestamp), this can be used for 
+  // to check if the JWT got expired.
+  return jwt.encode({sub: user.id, iat: timestamp}, SECRET_KEY);
+}
+
+// We send the user JWT token, and he has to store it securely in browser.
+// For every authenticated request he has to send this JWT as well.
+res.json({token: tokenForUser(user)});
+
+Now how to validate once the user gets us a JWT.
+We take the help of passport.js library.
+Why ? Passport is an ecosystem rather than a library. Its an ecosystem of strategies. A strategy is one way to authenticate a 
+resource. For example authenticating a resoruce via recognizing his JWT. Another strategy could be via handling signing in
+via google or facebook. Anotehr strategy could be via logging in with username and password.
+
+So passport can handle all these and many more strategies.
+
+Now whenever we want to employ the strategy for login or any particular route, we have to get that particular strategy from 
+now configured passport library.
+Here below we are getting jwt strategy authentication.
+const requireAuth = passport.authenticate('jwt', { session: false });
+
+app.get('/', requireAuth, (req, res) => {
+    res.send('Hi there!');
+  });
+
+For any app.METHOD callback you can pass series of callbacks or middlewares, whenever you want to skip the next middlewares
+, you can call next(), or invoke any other route handler by calling next('route'). That way, the handler associated with that 
+route will be invoked.
+
+if you want to call next, you should also get that as a parameter:
+like (req, res, next) => {}. Also you can also pass error object to next to cancel all callbacks inline and throw the error.
+
+Above, in requireAuth, if it has a valid toeken, next middleware will be called, taken care by passport, else requireAuth will 
+return string 'Unauthorized'.
+
+You can also use passport to compare the username and password stored in your localdb or somewhere in local.
+
+import LocalStrategy from 'passport-local';
+
+In router :
+app.post('/signIn', requireSignIn, signIn);
+
+const LocalOptions = { usernameField: 'email' };
+const localLogin = new LocalStrategy(LocalOptions, (email, password, done) => {
+  User.findOne({email}, (err, user) => {
+    if(err) 
+      return done(err);
+
+    if(!user) 
+      return done(null, false);
+    // How you get this method, you can actually define this in mongoose schema as the follwing function below.
+    user.comparePasswords(password, function(err, isMatch) {
+      if(err) return done(err);
+
+      if(!isMatch) return done(null, false);
+
+      return done(null, user);
+    });
+  });
+});
+
+// This is the syntax for defining a hook method you can call agaisnt each data object that you retrieved using mongoose.
+UserSchema.methods.comparePassword = function( candidatePassword, callback ) {
+  bcrypt.compare( candidatePassword, this.password, (error, isMatch) => {
+    if(error) return callback(error);
+
+    callback(null, isMatch);
+  });
+};
+
+
+To understand nodejs better, always remember that middlewares or callback always pass the error parameter first.
+Second would be the data object. You should always define your callbacks in the same manner to maitnain the consistency.
+
+And also remember that the object that we expose via import is same across everywhere. It's the same copy all across the application.
+
+
+
+
+
+
+
 
 
 
