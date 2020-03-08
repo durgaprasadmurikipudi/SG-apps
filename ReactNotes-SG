@@ -853,6 +853,11 @@ But if it was called, all the required strategies are set and by the time you lo
 all the stratgies are already present in that passport object. So the imports placement is crucial, see that all the required 
 modules are loaded before you execute your app.
 
+Remember, whenever you wanted to do redirect to the home page after a successful action complete like fetching a resource 
+in action creator, you dont have access to history object so you explicily passed a history object to the plain router
+and then imported in teh actions file or as an extra parameter history object to the action creator 
+or you could also pass a callback and the callback can actually handle this redirect request in component object itself.
+
 
 
 
